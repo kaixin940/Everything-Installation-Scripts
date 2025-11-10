@@ -1,49 +1,81 @@
-Everything 安装脚本使用说明
-================================
+# Everything 安装脚本集合
 
-当前目录包含以下可用文件：
+## 项目简介
 
-1. 安装Everything.ps1
-   功能：自动下载安装Everything主程序和es.exe命令行工具
-   使用：以管理员身份运行PowerShell执行此脚本
-   结果：完整安装Everything，包括命令行工具和PATH配置
+这是一个完整的Everything安装脚本集合，提供两种安装选项来满足不同需求。
 
-2. 配置Everything命令行搜索.ps1
-   功能：配置es.exe命令行搜索工具（如果主脚本未成功）
-   使用：以管理员身份运行PowerShell执行此脚本
-   结果：可以在命令行使用es命令搜索文件
+## 安装选项
 
-3. 配置Everything快捷键和右键菜单.ps1
-   功能：配置Everything的快捷键和右键菜单集成
-   使用：以管理员身份运行PowerShell执行此脚本
-   结果：
-   - Ctrl+Alt+E 快捷键打开Everything搜索
-   - 右键文件可选择"用Everything搜索文件"
-   - Everything开机自启动
+### 1. 基础安装 - `安装Everything.ps1`
+**功能**：自动下载安装Everything主程序和es.exe命令行工具
+**使用**：以管理员身份运行PowerShell执行此脚本
+**结果**：完整安装Everything，包括命令行工具和PATH配置
 
-4. 安装EverythingToolbar.ps1
-   功能：自动下载安装EverythingToolbar任务栏搜索工具
-   使用：以管理员身份运行PowerShell执行此脚本
-   结果：在Windows任务栏集成Everything搜索框
+```powershell
+powershell -ExecutionPolicy Bypass -File .\安装Everything.ps1
+```
 
-5. EverythingToolbar手动安装指南.txt
-   功能：EverythingToolbar任务栏搜索工具的安装指南
-   使用：备用安装指南，如果自动脚本失败时使用
-   结果：在Windows任务栏集成Everything搜索框
+### 2. 完整安装 - `Everything完整安装.ps1` ⭐ 推荐
+**功能**：一键安装Everything + 命令行工具 + 任务栏工具栏
+**使用**：以管理员身份运行PowerShell执行此脚本
+**特点**：
+- 默认静默安装，无需用户交互
+- 支持本地安装包优先使用
+- 自动配置es.exe命令行工具
+- 自动安装EverythingToolbar任务栏搜索
+- 完整的PATH环境变量配置
 
-使用顺序建议：
-1. 首先运行"安装Everything.ps1"（主安装脚本）
-2. 如果需要，运行"配置Everything命令行搜索.ps1"
-3. 运行"配置Everything快捷键和右键菜单.ps1"
-4. 运行"安装EverythingToolbar.ps1"（任务栏搜索工具）
-5. 如果自动安装失败，参考"EverythingToolbar手动安装指南.txt"
+```powershell
+# 默认完整安装（推荐）
+powershell -ExecutionPolicy Bypass -File .\Everything完整安装.ps1
 
-注意事项：
+# 使用本地安装包
+powershell -ExecutionPolicy Bypass -File .\Everything完整安装.ps1 -LocalInstallerPath "C:\path\to\installer.exe"
+
+# 仅安装命令行工具（跳过工具栏）
+powershell -ExecutionPolicy Bypass -File .\Everything完整安装.ps1 -NoToolbar
+
+# 交互式安装（显示安装界面）
+powershell -ExecutionPolicy Bypass -File .\Everything完整安装.ps1 -Silent:$false
+```
+
+## 安装后功能
+
+### 命令行搜索
+```cmd
+es *.txt                    # 搜索txt文件
+es filename.ext             # 搜索特定文件
+es "folder name"            # 在特定文件夹搜索
+```
+
+### 任务栏搜索
+- 右键任务栏 → 工具栏 → EverythingToolbar
+- 使用任务栏搜索框进行搜索
+- 支持Everything的所有搜索语法
+
+## 系统要求
+
+- Windows 10/11
+- PowerShell 2.0+
+- 管理员权限
+
+## 注意事项
+
 - 所有脚本都需要管理员权限运行
-- 确保Everything已正确安装并运行
 - 命令行搜索需要重启命令行窗口生效
-- EverythingToolbar需要从GitHub手动下载安装
+- EverythingToolbar安装后需要配置任务栏工具栏
 
-下载地址：
-Everything: https://www.voidtools.com/
-EverythingToolbar: https://github.com/srwi/EverythingToolbar/releases/
+## 下载地址
+
+- Everything: https://www.voidtools.com/
+- EverythingToolbar: https://github.com/srwi/EverythingToolbar/releases/
+
+## 故障排除
+
+- 如果工具栏没有出现，重启Windows资源管理器
+- 确保Everything服务正在运行
+- 检查PATH环境变量是否正确配置
+
+## 许可证
+
+本项目采用MIT许可证。
