@@ -46,31 +46,83 @@ $es_exe = "$EverythingPath\es.exe"
 if (-not (Test-Path $es_exe)) {
     Write-Host "es.exe not found, downloading..." -ForegroundColor Yellow
     
-    try {
-        Write-Host "Downloading ES command-line tools..." -ForegroundColor White
-        $webClient = New-Object System.Net.WebClient
-        $webClient.DownloadFile($ESDownloadUrl, $ESTempZip)
+    $downloadSuccess = $false
+    $attemptCount = 0
+    $maxAttempts = 3
+    
+    # Try multiple download attempts with different URLs
+    $downloadUrls = @(
+        "https://www.voidtools.com/ES-1.1.0.10.zip",
+        "https://www.voidtools.com/ES-1.1.0.9.zip",
+        "https://www.voidtools.com/ES-1.1.0.8.zip"
+    )
+    
+    foreach ($url in $downloadUrls) {
+        if ($downloadSuccess) { break }
+        $attemptCount++
         
-        if (Test-Path $ESTempExtract) {
-            Remove-Item $ESTempExtract -Recurse -Force
+        Write-Host "Attempt ${attemptCount}: Downloading from ${url}" -ForegroundColor White
+        
+        try {
+            Write-Host "Downloading ES command-line tools..." -ForegroundColor White
+            $webClient = New-Object System.Net.WebClient
+            $webClient.Timeout = 30000  # 30 seconds timeout
+            $webClient.DownloadFile($url, $ESTempZip)
+            
+            if (Test-Path $ESTempZip) {
+                $fileInfo = Get-Item $ESTempZip
+                if ($fileInfo.Length -gt 100000) {  # Check if file is not too small
+                    Write-Host "Download completed successfully" -ForegroundColor Green
+                    
+                    # Extract the ZIP file
+                    if (Test-Path $ESTempExtract) {
+                        Remove-Item $ESTempExtract -Recurse -Force
+                    }
+                    New-Item -ItemType Directory -Path $ESTempExtract -Force | Out-Null
+                    
+                    $shell = New-Object -ComObject Shell.Application
+                    $zip = $shell.NameSpace($ESTempZip)
+                    foreach($item in $zip.items()) {
+                        $shell.Namespace($ESTempExtract).CopyHere($item)
+                    }
+                    
+                    # Copy es.exe to Everything directory
+                    if (Test-Path "$ESTempExtract\es.exe") {
+                        Copy-Item "$ESTempExtract\es.exe" $EverythingPath -Force
+                        Write-Host "es.exe installed successfully" -ForegroundColor Green
+                        $downloadSuccess = $true
+                    } else {
+                        Write-Host "es.exe not found in extracted files" -ForegroundColor Yellow
+                    }
+                    
+                    # Cleanup
+                    Remove-Item $ESTempZip -Force
+                    Remove-Item $ESTempExtract -Recurse -Force
+                } else {
+                    Write-Host "Downloaded file is too small, trying next URL..." -ForegroundColor Yellow
+                    if (Test-Path $ESTempZip) {
+                        Remove-Item $ESTempZip -Force
+                    }
+                }
+            }
+            
+        } catch {
+            Write-Host "Download failed from ${url} : $_" -ForegroundColor Yellow
+            if (Test-Path $ESTempZip) {
+                Remove-Item $ESTempZip -Force
+            }
+            if (Test-Path $ESTempExtract) {
+                Remove-Item $ESTempExtract -Recurse -Force
+            }
         }
-        New-Item -ItemType Directory -Path $ESTempExtract -Force | Out-Null
         
-        $shell = New-Object -ComObject Shell.Application
-        $zip = $shell.NameSpace($ESTempZip)
-        foreach($item in $zip.items()) {
-            $shell.Namespace($ESTempExtract).CopyHere($item)
-        }
-        
-        Copy-Item "$ESTempExtract\es.exe" $EverythingPath -Force
-        Write-Host "es.exe installed successfully" -ForegroundColor Green
-        
-        # Cleanup
-        Remove-Item $ESTempZip -Force
-        Remove-Item $ESTempExtract -Recurse -Force
-        
-    } catch {
-        Write-Host "Failed to download/install es.exe: $_" -ForegroundColor Red
+        if ($attemptCount -ge $maxAttempts) { break }
+    }
+    
+    if (-not $downloadSuccess) {
+        Write-Host "Failed to download es.exe after ${attemptCount} attempts" -ForegroundColor Red
+        Write-Host "Please download manually from: https://www.voidtools.com/downloads/" -ForegroundColor Cyan
+        Write-Host "Or continue without command-line tools" -ForegroundColor Yellow
     }
 } else {
     Write-Host "es.exe already exists" -ForegroundColor Green
@@ -121,17 +173,23 @@ if (-not $NoToolbar) {
             Write-Host "Downloading EverythingToolbar..." -ForegroundColor White
             try {
                 $webClient = New-Object System.Net.WebClient
+                $webClient.Timeout = 30000  # 30 seconds timeout
                 $webClient.DownloadFile($ToolbarDownloadUrl, $ToolbarDownloadPath)
                 $installerPath = $ToolbarDownloadPath
                 
                 $fileInfo = Get-Item $installerPath
                 if ($fileInfo.Length -lt 1000000) {
                     Write-Host "Warning: Downloaded file may be incomplete" -ForegroundColor Yellow
+                    Write-Host "File size: $($fileInfo.Length) bytes" -ForegroundColor Gray
+                } else {
+                    Write-Host "Download completed successfully" -ForegroundColor Green
                 }
                 
             } catch {
                 Write-Host "Failed to download EverythingToolbar: $_" -ForegroundColor Red
                 Write-Host "Please download manually: $ToolbarDownloadUrl" -ForegroundColor Cyan
+                Write-Host "Continuing without EverythingToolbar installation..." -ForegroundColor Yellow
+                $installerPath = $null
             }
         }
         
