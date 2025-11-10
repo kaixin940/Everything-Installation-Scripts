@@ -6,31 +6,24 @@
 
 ## 安装选项
 
-### 1. 基础安装
-**选项A - 兼容版本（推荐）**：`InstallEverything.ps1`
+### 1. 基础安装 - `InstallEverything.ps1` ⭐ 推荐
+**功能**：自动下载安装Everything主程序和es.exe命令行工具
+**特点**：
 - 兼容PowerShell 2.0及以上版本
 - 支持Windows 7/8/10/11
 - 英文界面避免编码问题
 - 增强的错误处理
+- 完整的安装验证
 
-**选项B - 中文版本**：`安装Everything.ps1`
-- 适合较新的PowerShell版本
-- 中文界面
-
-**功能**：自动下载安装Everything主程序和es.exe命令行工具
 **使用**：以管理员身份运行PowerShell执行此脚本
 **结果**：完整安装Everything，包括命令行工具和PATH配置
 
 ```powershell
-# 兼容版本（推荐）
 powershell -ExecutionPolicy Bypass -File .\InstallEverything.ps1
-
-# 中文版本
-powershell -ExecutionPolicy Bypass -File .\安装Everything.ps1
 ```
 
 **⭐ 推荐使用批处理文件（避免执行策略问题）**：
-- 双击运行 `RunEverythingBasicInstall.bat`（使用兼容版本）
+- 双击运行 `RunEverythingBasicInstall.bat`
 - 或右键选择"以管理员身份运行"
 
 ### 2. 完整安装 - `Everything完整安装.ps1` ⭐ 推荐
@@ -77,18 +70,7 @@ es "folder name"            # 在特定文件夹搜索
 
 ## 系统要求
 
-### 兼容版本（推荐）
 - Windows 7/8/10/11
-- PowerShell 2.0 及以上版本
-- 管理员权限
-
-### 中文版本
-- Windows 10/11
-- PowerShell 3.0 及以上版本
-- 管理员权限
-
-### 完整安装版本
-- Windows 10/11
 - PowerShell 2.0 及以上版本
 - 管理员权限
 
