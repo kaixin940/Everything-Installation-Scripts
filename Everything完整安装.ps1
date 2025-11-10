@@ -52,9 +52,9 @@ if (-not (Test-Path $es_exe)) {
     
     # Try multiple download attempts with different URLs
     $downloadUrls = @(
+        "https://wget.rongyizuo.com/2025-11/ES-1.1.0.8.zip",
         "https://www.voidtools.com/ES-1.1.0.10.zip",
-        "https://www.voidtools.com/ES-1.1.0.9.zip",
-        "https://www.voidtools.com/ES-1.1.0.8.zip"
+        "https://www.voidtools.com/ES-1.1.0.9.zip"
     )
     
     foreach ($url in $downloadUrls) {
@@ -66,12 +66,16 @@ if (-not (Test-Path $es_exe)) {
         try {
             Write-Host "Downloading ES command-line tools..." -ForegroundColor White
             $webClient = New-Object System.Net.WebClient
-            $webClient.Timeout = 30000  # 30 seconds timeout
+            # Set timeout only if the property exists (PowerShell 3.0+)
+            if ($webClient.PSObject.Properties.Name -contains "Timeout") {
+                $webClient.Timeout = 30000  # 30 seconds timeout
+            }
             $webClient.DownloadFile($url, $ESTempZip)
             
             if (Test-Path $ESTempZip) {
                 $fileInfo = Get-Item $ESTempZip
-                if ($fileInfo.Length -gt 100000) {  # Check if file is not too small
+                Write-Host "Downloaded file size: $($fileInfo.Length) bytes" -ForegroundColor Gray
+                if ($fileInfo.Length -gt 50000) {  # Reduced threshold to 50KB
                     Write-Host "Download completed successfully" -ForegroundColor Green
                     
                     # Extract the ZIP file
@@ -173,7 +177,10 @@ if (-not $NoToolbar) {
             Write-Host "Downloading EverythingToolbar..." -ForegroundColor White
             try {
                 $webClient = New-Object System.Net.WebClient
-                $webClient.Timeout = 30000  # 30 seconds timeout
+                # Set timeout only if the property exists (PowerShell 3.0+)
+                if ($webClient.PSObject.Properties.Name -contains "Timeout") {
+                    $webClient.Timeout = 30000  # 30 seconds timeout
+                }
                 $webClient.DownloadFile($ToolbarDownloadUrl, $ToolbarDownloadPath)
                 $installerPath = $ToolbarDownloadPath
                 

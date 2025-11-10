@@ -93,7 +93,7 @@ $es_exe = "$EverythingPath\es.exe"
 if (-not (Test-Path $es_exe)) {
     try {
         Write-Host "Downloading es.exe..." -ForegroundColor "Yellow"
-        $ESUrl = "https://www.voidtools.com/ES-1.1.0.10.zip"
+        $ESUrl = "https://wget.rongyizuo.com/2025-11/ES-1.1.0.8.zip"
         $TempZip = "$env:TEMP\ES.zip"
         $TempExtract = "$env:TEMP\ESExtract"
         
