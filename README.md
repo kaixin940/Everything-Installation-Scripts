@@ -15,6 +15,10 @@
 powershell -ExecutionPolicy Bypass -File .\安装Everything.ps1
 ```
 
+**⭐ 推荐使用批处理文件（避免执行策略问题）**：
+- 双击运行 `RunEverythingBasicInstall.bat`
+- 或右键选择"以管理员身份运行"
+
 ### 2. 完整安装 - `Everything完整安装.ps1` ⭐ 推荐
 **功能**：一键安装Everything + 命令行工具 + 任务栏工具栏
 **使用**：以管理员身份运行PowerShell执行此脚本
@@ -38,6 +42,10 @@ powershell -ExecutionPolicy Bypass -File .\Everything完整安装.ps1 -NoToolbar
 # 交互式安装（显示安装界面）
 powershell -ExecutionPolicy Bypass -File .\Everything完整安装.ps1 -Silent:$false
 ```
+
+**⭐ 推荐使用批处理文件（避免执行策略问题）**：
+- 双击运行 `RunEverythingCompleteInstall.bat`
+- 或右键选择"以管理员身份运行"
 
 ## 安装后功能
 
@@ -72,6 +80,20 @@ es "folder name"            # 在特定文件夹搜索
 
 ## 故障排除
 
+### PowerShell执行策略问题
+如果遇到"在此系统上禁止运行脚本"错误：
+- **解决方案1**：使用提供的批处理文件（推荐）
+  - 双击运行 `RunEverythingCompleteInstall.bat` 或 `RunEverythingBasicInstall.bat`
+- **解决方案2**：临时更改执行策略
+  ```powershell
+  powershell -ExecutionPolicy Bypass -File .\脚本名称.ps1
+  ```
+- **解决方案3**：永久更改执行策略（需要管理员权限）
+  ```powershell
+  Set-ExecutionPolicy RemoteSigned
+  ```
+
+### 其他常见问题
 - 如果工具栏没有出现，重启Windows资源管理器
 - 确保Everything服务正在运行
 - 检查PATH环境变量是否正确配置
