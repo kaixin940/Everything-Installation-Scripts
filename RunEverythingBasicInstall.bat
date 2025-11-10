@@ -21,7 +21,7 @@ echo.
 echo Starting Everything basic installation...
 echo.
 
-powershell -ExecutionPolicy Bypass -File "%~dp0安装Everything.ps1"
+powershell -ExecutionPolicy Bypass -File "%~dp0InstallEverything.ps1"
 
 echo.
 echo Script execution completed
